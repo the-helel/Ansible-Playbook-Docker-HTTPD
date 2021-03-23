@@ -1,0 +1,59 @@
+- hosts: localhost
+  tasks:
+    - name : "configuring docker repo"
+      yum_repository:
+              name: "docker"
+              gpgcheck: no
+              description: docker repo
+              baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+
+     
+    - name : "Installing docker-ce package"
+      command: "yum install docker-ce --nobest --skip-broken -y"
+
+    - name: "Starting Docker"
+      service:
+       name: "docker" 
+       state: started
+       enabled: yes
+
+    - name: "Installing Python"
+      package:
+              name: python3
+              state: present
+
+    - name: "Installing Docker SDK"
+      command: pip3 install docker
+         
+   
+    - name: "Getting Image from Docker Hub"
+      docker_image:
+              name: "httpd"
+              source: pull
+
+    - name: "Creating Directory for file"
+      file:
+              path: "/var/www/html"
+              state: directory
+    
+    - name : "Creating Html File" 
+      copy:
+              dest: /var/www/html/index.html
+              content: "This is Ansible Docker"
+
+    - name: "Launching Docker Container"
+      docker_container:
+              name: "AnsibleDocker"
+              image: httpd
+              exposed_ports:
+                      - "80"
+              ports:
+                      - "3036:80"
+              volumes:
+                      - "/var/www/html:/usr/local/apache2/htdocs"
+              state: started
+
+    - name: "Stopping Firewall"
+      service:
+              name: "firewalld"
+              state: stopped
