@@ -8,5 +8,4 @@ following operations in the managed nodes:
 🔹 Pull the httpd server image from the Docker Hub
 🔹 Run the docker container and expose it to the public
 🔹 Copy the html code in /var/www/html directory
-and start the web server
-**
+and start the web server**
